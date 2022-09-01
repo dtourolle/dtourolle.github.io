@@ -5,8 +5,7 @@ entries:
   - title: about
     entries:
       - title: This is a portfolio of private projects I have started and maybe even completed. I am an engineer and researcher who enjoys projects which combine mechanical design with automation.
-    - title: My github home page
-      - link: https://github.com/dtourolle
+
   - title: all posts
     post_list:
       limit: 10
