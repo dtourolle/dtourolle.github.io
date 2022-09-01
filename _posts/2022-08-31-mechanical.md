@@ -1,3 +1,10 @@
+---
+layout: post
+category: e-reader
+title: "D-reader CAD and CAM"
+
+---
+
 ## Design process
 With all the parts chosen it was now time to get down to business in [FreeCAD](https://www.freecadweb.org/). The model can be found in the [CAD](CAD) folder, this contains all the parts which need machining and the CAM jobs. In this case as this was a re-housing of the electronics from the original device, the majority of considerations on locations and dimensioning were already made. 
 ![](./assets/images/assembly.png)
