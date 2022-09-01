@@ -13,12 +13,7 @@ entries:
       show_more_text: See archive...
       show_more_url: archive.html
 
-  - title: posts by project
-    post_list:
-      category: e-reader
-      show_more: true
-      show_more_text: See more posts...
-      show_more_url: e-reader-archive.html
+
 
   - title: rss
     url: feed.xml
