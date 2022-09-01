@@ -7,3 +7,5 @@ gem "kramdown-parser-gfm"
 gemspec
 
 gem "github-pages", "~> GITHUB-PAGES-VERSION", group: :jekyll_plugins
+
+gem 'jekyll-relative-links'
