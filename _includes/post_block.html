@@ -5,7 +5,7 @@
     <a class="link-primary" title="{{ post.url | prepend: site.baseurl }}" href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a>
   </h2>
   <p>
-    <img src={{ post.image }} alt="" width="30%" height=auto style="float: left; margin-right: 15px;">
+    <img src={{ post.image }} alt="" width="30%" height=auto style="float: left; margin-right: 15px;" href="{{ post.url | prepend: site.baseurl }}">
     {{ post.content | strip_html | truncatewords:50 }}</p>
 </div>
 <br>
