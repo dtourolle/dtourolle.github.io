@@ -11,9 +11,9 @@ permalink: /:slug.html
 favicon: "logo.jfif" # name+extension of favicon (which must be put on the root folder)
 # goat_counter: "yoursitename" # put your GoatCounter name if you want to use GoatCounter analytics
 
-theme: flex # if you are using GitHub Pages, change it to remote_theme: riggraz/no-style-please
-
-markdown: redcarpet
+remote_theme: broccolini/swiss
+theme_color: grey
+markdown: kramdown
 pygments: true
 
 theme_config:
