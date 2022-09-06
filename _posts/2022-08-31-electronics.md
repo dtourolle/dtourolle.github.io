@@ -2,7 +2,7 @@
 layout: post
 category: e-reader
 title: "D-reader electronics"
-image: ./assets/images/adapter_mess.png
+image: ./assets/images/Old_with_electronics.jpg
 ---
 
 # The electro-technical elements
