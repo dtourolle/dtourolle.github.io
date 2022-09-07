@@ -9,6 +9,7 @@
     <img src={{ post.image }} alt="" width="30%" height=auto style="float: left; margin-right: 15px;"  hspace="20">
   </a>
     {{ post.content | strip_html | truncatewords:50 }}</p>
+    <a href="{{ post.url | prepend: site.baseurl }}">read more</a>
 </div>
 
 <hr style="clear:both;">
