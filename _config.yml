@@ -18,6 +18,7 @@ favicon: "logo.jfif" # name+extension of favicon (which must be put on the root 
 remote_theme: broccolini/swiss
 theme_color: gray
 markdown: kramdown
+  math_engine: katex
 pygments: true
 
 theme_config:
