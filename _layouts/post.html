@@ -15,7 +15,7 @@ layout: default
 
 <div class="container mx-auto px-2 py-2 clearfix">
   {% for post in site.posts %}
-    {% if post.tags contains page.tag-name %}
+    {% if post.tags contains page.tags %}
       {% include post_block.html %}
       {% endif %}
   {% endfor %}

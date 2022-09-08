@@ -3,7 +3,7 @@ layout: post
 category: e-reader
 title: "D-reader CAD and CAM"
 image: ./assets/images/CNC.png
-tag-name: e-reader
+tags: e-reader
 ---
 
 ## Design process
