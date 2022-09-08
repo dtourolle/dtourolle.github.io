@@ -14,5 +14,8 @@ layout: default
 </article>
 
 <div class="container mx-auto px-2 py-2 clearfix">
-  {% include previous-next.html %}
+  {% for post in site.posts %}
+    {% if post.tags contains page.tag-name %}
+      {% include post_block.html %}
+  {% endfor %}
 </div>

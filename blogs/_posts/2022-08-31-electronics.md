@@ -3,6 +3,7 @@ layout: post
 category: e-reader
 title: "D-reader electronics"
 image: ./assets/images/Old_with_electronics.jpg
+tag-name: e-reader
 ---
 
 # The electro-technical elements
