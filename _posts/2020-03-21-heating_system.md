@@ -2,7 +2,7 @@
 layout: post
 category: heating-system
 title: "Heating controller"
-image: ./assets/images/thermostat_control.jpg
+image: ./assets/images/heating_system_flow_chart.png
 tags: [heating-system, project_home]
 ---
 # Heating control system
