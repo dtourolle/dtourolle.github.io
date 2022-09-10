@@ -2,7 +2,7 @@
 layout: post
 category: heating-system
 title: "D-reader project"
-image: ./assets/images/image%20(4).jpg
+image: ./assets/images/thermostat_control.jpg
 tags: [heating-system, project_home]
 ---
 # Heating control system
