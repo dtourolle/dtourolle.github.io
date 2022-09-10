@@ -1,7 +1,7 @@
 ---
 layout: post
 category: heating-system
-title: "D-reader project"
+title: "Heating controller"
 image: ./assets/images/thermostat_control.jpg
 tags: [heating-system, project_home]
 ---
