@@ -5,7 +5,6 @@ title: "Motion detection on Pi-zero"
 image: ./assets/images/motion_detection/examples_5_1.png
 tags: [e-reader, project_home]
 ---
-# 
 
 This is a test case notebook which demonstrates how EMA background subtraction works. After going through this the user should be familiar with the method and how the parameter selection and scene effect the outcome. The source code can be found [here](https://github.com/dtourolle/motion-detection). This code was written for a raspberry pi zero, so while neural nets and other ML models will for sure out perform this, this can be used on a very low powered device and needs no training, just some intuitive parameter selection.
 
