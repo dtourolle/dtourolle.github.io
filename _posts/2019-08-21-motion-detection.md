@@ -7,8 +7,11 @@ tags: [e-reader, project_home]
 ---
 # 
 
-This is a test case notebook which demonstrates how EMA background subtraction works. After going through this the user should be familiar with the method and how the parameter selection and scene effect the outcome. The source code can be found [here](https://github.com/dtourolle/motion-detection).
+This is a test case notebook which demonstrates how EMA background subtraction works. After going through this the user should be familiar with the method and how the parameter selection and scene effect the outcome. The source code can be found [here](https://github.com/dtourolle/motion-detection). This code was written for a raspberry pi zero, so while neural nets and other ML models will for sure out perform this, this can be used on a very low powered device and needs no training, just some intuitive parameter selection.
 
+# Initialisation and false detections
+
+My experience so far is that false detections are a greater issue than tuning the system for true detections, and tuning the system can be very painful as the system needs time to learn the background, so changing settings often means true results come minutes later. To speed this up good initialisation of the detector class is required. To simulate a noisy camera we add noise to the image at each update, to show how a good initialisation can improve results we create two detectors one initialised with the perfect values the other with zeros. We can then quantify the convergence of the false detections and the variance.
 
 
 ```python
@@ -25,11 +28,6 @@ import matplotlib.pyplot as plt
 plt.rcParams['figure.figsize'] = [20, 10]
 example = np.array(Image.open('example.jpg'))
 ```
-
-# Initialisation and false detections
-
-My experience so far is that false detections are a greater issue than tuning the system for true detections, and tuning the system can be very painful as the system needs time to learn the background, so changing settings often means true results come minutes later. To speed this up good initialisation of the detector class is required. To simulate a noisy camera we add noise to the image at each update, to show how a good initialisation can improve results we create two detectors one initialised with the perfect values the other with zeros. We can then quantify the convergence of the false detections and the variance.
-
 
 
 ```python
