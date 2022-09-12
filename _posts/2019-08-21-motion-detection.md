@@ -6,18 +6,16 @@ image: ./assets/images/motion_detection/examples_5_1.png
 tags: [e-reader, project_home]
 ---
 
-This is a test case notebook which demonstrates how EMA background subtraction works. After going through this the user should be familiar with the method and how the parameter selection and scene effect the outcome. The source code can be found [here](https://github.com/dtourolle/motion-detection). This code was written for a raspberry pi zero, so while neural nets and other ML models will for sure out perform this, this can be used on a very low powered device and needs no training, just some intuitive parameter selection.
+This is a test case notebook which demonstrates how EMA background subtraction works. After going through this the user should be familiar with the method and how the parameter selection and scene affect the outcome. The source code can be found [here](https://github.com/dtourolle/motion-detection). This code was written for a raspberry pi zero, so while neural nets and other ML models will for sure out perform this, this can be used on a very low powered device and needs no training, just some intuitive parameter selection.
 
 # Initialisation and false detections
 
-My experience so far is that false detections are a greater issue than tuning the system for true detections, and tuning the system can be very painful as the system needs time to learn the background, so changing settings often means true results come minutes later. To speed this up good initialisation of the detector class is required. To simulate a noisy camera we add noise to the image at each update, to show how a good initialisation can improve results we create two detectors one initialised with the perfect values the other with zeros. We can then quantify the convergence of the false detections and the variance.
-
+My experience so far is that false detections are a greater issue than tuning the system for true detections and tuning the system can be very painful as the system needs time to learn the background, so changing settings often means true results come minutes later. To speed this up good initialisation of the detector class is required. To simulate a noisy camera, we add noise to the image at each update, to show how a good initialisation can improve results we create two detectors one initialised with the perfect values the other with zeros. We can then quantify the convergence of the false detections and the variance.
 
 ```python
 from motion_detectors import EMAV_background_subtracting_motion_detection as bgd
 #%matplotlib widget
 ```
-
 
 ```python
 from PIL import Image
@@ -28,7 +26,6 @@ plt.rcParams['figure.figsize'] = [20, 10]
 example = np.array(Image.open('example.jpg'))
 ```
 
-
 ```python
 
 variance = 100 # the variance to be used for simulated camera noise.
@@ -38,11 +35,9 @@ detector_no_initialisation = bgd(0.05,16,example.shape, initial_average=np.zeros
 detector_good_initialisation = bgd(0.05,16,example.shape, initial_average=example, initial_variance=variance, minimum_variance=18)
 ```
 
-
 ```python
 plt.imshow(example)
 ```
-
 
 
 
@@ -50,9 +45,7 @@ plt.imshow(example)
 
 
 
-
 ![png](./assets/images/motion_detection/examples_5_1.png)
-
 
 
 ```python
@@ -77,7 +70,6 @@ for i in range(250):
     measured_variance_good_init.append(np.mean(detector_good_initialisation.variance_background))
     #plt.imshow(a,interpolation='nearest')
 
-
 fig, ax = plt.subplots(1, 2)
 ax[0].plot(false_postives_no_init)
 ax[0].plot(false_postives_good_init)
@@ -95,28 +87,23 @@ ax[1].legend(['No initilisation','Good initlisation'])
 
 
 
-
     <matplotlib.legend.Legend at 0x7fab885126a0>
-
 
 
 
 ![png](./assets/images/motion_detection/examples_6_1.png)
 
-
 This might not seem like much but on a system like a rasperry pi zero an update can take 3 seconds, so the camera is essentially blind for the first 5 minutes after starting if the Variance is so poorly measured.
 
 # Motion detection
 
-No we have an initialised system how well can we detect motion which is not part of the background. The first test is to add a synthetic person to the images at random spaces and times. Here a copyright free image of a person is loaded and then a function got adding it to the image is defined.
-
+Now we have an initialised system how well can we detect motion which is not part of the background. The first test is to add a synthetic person to the images at random spaces and times. Here a copyright free image of a person is loaded and then a function got adding it to the image is defined.
 
 ```python
 person = zoom(np.array(Image.open('walking_man.jpg'))[:,:,0],0.3)<220
 ```
 
-Now lets add him to the image.
-
+Now let’s add him to the image.
 
 ```python
 y=200
@@ -130,11 +117,9 @@ def insert_person(image,x,y,value=[35,120,120]):
     im[x:x+person.shape[0],y:y+person.shape[1]]=sub
     return im
 
-
 image = insert_person(example,400,200)
 truth = insert_person(np.zeros(example.shape[:-1],dtype=bool),400,200,1)
 ```
-
 
 ```python
 plt.figure()
@@ -145,21 +130,16 @@ plt.imshow(truth,interpolation='nearest')
 
 
 
-
     <matplotlib.image.AxesImage at 0x7fab8777f518>
-
 
 
 
 ![png](./assets/images/motion_detection/examples_12_1.png)
 
 
-
 ![png](./assets/images/motion_detection/examples_12_2.png)
 
-
 Now a little green man is walking across the grass. We can test detection for various weights and see if we can recover visually the person.
-
 
 ```python
 weights = [0.01, 0.05, 0.1, 0.5, 0.9]
@@ -183,9 +163,7 @@ for i in range(training_iterations):
 #apply the image with person
 masks = {w:d.apply(image) for w,d in detectors.items()}
 
-
 ```
-
 
 ```python
 rows=2
@@ -204,12 +182,9 @@ for i,t in enumerate(masks.items()):
     
 ```
 
-
 ![png](./assets/images/motion_detection/examples_15_0.png)
 
-
 Clearly the higher weight values have less memory of the scene and it's variance, this leads to noise being detected as a movements. The question is what happens is the person stays there for each detector?
-
 
 ```python
 size_of_person = np.sum(person)
@@ -226,9 +201,7 @@ for i in range(120):
         counts[w].append(np.sum(np.logical_and(detector.apply(noisy_image),truth)))
 
 
-
 ```
-
 
 ```python
 plt.figure()
@@ -241,21 +214,17 @@ plt.xlim([0,120])
 
 
 
-
     (0.0, 120.0)
-
 
 
 
 ![png](./assets/images/motion_detection/examples_18_1.png)
 
-
-As one would expect the smaller the training weight the more iterations until the person is learnt as part of the background. There are essentially three behaviours which can be observered, the highest weights cannot differentiate between the person and noise, so they are constantly detecting pixels in this location. The low weights adapt quickly to the person, with the adaption being longer for smaller weights. The weight of 0.5 represents an intersting case, the average and variance have adapted quickly to the presence of the person, so it is initially not sensitive to the person, however after several itterartions the variance will decrease and it is again sensitve to noise.
+As one would expect the smaller the training weight the more iteration until the person is learnt as part of the background. There are essentially three behaviours which can be observered, the highest weights cannot differentiate between the person and noise, so they are constantly detecting pixels in this location. The low weights adapt quickly to the person, with the adaption being longer for smaller weights. The weight of 0.5 represents an intersting case, the average and variance have adapted quickly to the presence of the person, so it is initially not sensitive to the person, however after several itterartions the variance will decrease, and it is again sensitve to noise.
 
 # Moving background
 
-To demonstrate both the utlitity of the variance tracking for motion segmentation, and the issues with false postives here is a section where a moving bakground is simulated. While this would be nicer with a video, I did not have the foresight to take one, also it would increase the repo size. Instead motion is simulated using the `swirl` function, creating a region in the center of the image which is deformed.
-
+To demonstrate both the utlitity of the variance tracking for motion segmentation, and the issues with false postives here is a section where a moving bakground is simulated. While this would be nicer with a video, I did not have the foresight to take one, also it would increase the repo size. Instead, motion is simulated using the `swirl` function, creating a region in the center of the image which is deformed.
 
 ```python
 from skimage.transform import swirl
@@ -274,18 +243,15 @@ for i,s in enumerate(series):
     x+=1
 ```
 
-
 ![png](./assets/images/motion_detection/examples_21_0.png)
-
 
 No to show how this influecne the learning we can run a series of detectors with different learning weights.
 
 Ultimately only two things are of interest, what happens to the variance in the regions where the swirl is occuring? and how many times is this deformation classified as a moving object by each detector?
 
 
-
 ```python
-#initalise the detectors and train to the static noisy background.
+#Initalise the detectors and train to the static noisy background.
 
 weights = [0.001, 0.01, 0.05, 0.25,0.5]
 variance=100
@@ -295,7 +261,7 @@ training_iterations = 50
 #train the background
 for i in range(training_iterations):
     noisy_image = example + np.random.normal(0, variance**0.5, example.shape)
-    # rember the camera clips values
+    # remember the camera clips values
     noisy_image[noisy_image<0]=0
     noisy_image[noisy_image>255]=255
     for w,detector in detectors.items():
@@ -307,7 +273,6 @@ for i in range(training_iterations):
             
 init_vars = {w:np.copy(d.variance_background) for w,d in detectors.items()}
 ```
-
 
 ```python
 counts = {w:[] for w in weights}
@@ -332,7 +297,6 @@ for cycle in range(15):
         
 ```
 
-
 ```python
 fig, ax = plt.subplots(1,len(detectors))
 i=0
@@ -341,9 +305,7 @@ for w,d in detectors.items():
     i+=1
 ```
 
-
 ![png](./assets/images/motion_detection/examples_25_0.png)
-
 
 
 ```python
@@ -354,14 +316,11 @@ for w,d in detectors.items():
     i+=1
 ```
 
-
 ![png](./assets/images/motion_detection/examples_26_0.png)
-
 
 The variance field shows an increase in a central circle, which corresponds to the swirl. The variance is higher when object edges are moved as this creates a large observed change, hence the shape of the updated variance.
 
 What is also clear is that the size of the change decreases as the learning rate increases. A too high learning rate means the lesson of motion is not learned.
-
 
 ```python
 plt.figure()
@@ -373,19 +332,15 @@ plt.legend([str(x) for x in counts], title='Training Weight')
 
 
 
-
     <matplotlib.legend.Legend at 0x7fab86f3eac8>
-
 
 
 
 ![png](./assets/images/motion_detection/examples_28_1.png)
 
-
 The number of pixels classified as motion tells a similar story, high learning rates adapt to the current frame and do not learn the previous (or noise) leading to a much higher number of detected pixels.
 
 The flip side of this is with low learning rates, which show a long adaption (or no) adaption over time. This can be seen by the recurring peaks in the graph. Ideal learning rates apadt to the background noise at a high rate. The best examples being rates of 0.05 and 0.01 (though to a lesser extent as the learning is sub-optimal).
-
 
 ```python
 plt.figure()
@@ -397,21 +352,17 @@ plt.legend([str(x) for x in counts], title='Training Weight')
 
 
 
-
     <matplotlib.legend.Legend at 0x7fab744e47f0>
-
 
 
 
 ![png](./assets/images/motion_detection/examples_30_1.png)
 
-
 This can again be seen through the mean variance which for this specific synthetic example shows the adaption as the estimated variances converge over time. The low learning rate shows effectively slow adaption while the highest is essentially over fitting through the jagged oscillilations of the curve.
 
 # Object on moving background
 
-Now the question is does the adaption of the detectors to a background motion make the detectors insenstive to real "foreground" motion. The truth is nuanced, yes a region with a shaking tree will have issues detecting a camouflaged person walking in front, however it will have no issues if the person has a blue, red, black t-shirt i.e. a different colour channel as the variance is adapted per channel. The goal of the background learning and detection via variance is to reduce false detections, detecting an object is actually remarkably easy the issue is limmiting to meanigful detections.
-
+Now the question is does the adaption of the detectors to a background motion make the detectors insenstive to real "foreground" motion. The truth is nuanced, yes, a region with a shaking tree will have issues detecting a camouflaged person walking in front, however it will have no issues if the person has a blue, red, black t-shirt i.e. a different colour channel as the variance is adapted per channel. The goal of the background learning and detection via variance is to reduce false detections, detecting an object is actually remarkably easy the issue is limmiting to meanigful detections.
 
 
 
@@ -441,7 +392,6 @@ init_vars = {w:np.copy(d.variance_background) for w,d in detectors.items()}
 
 Initialised the detectors on a static background, then they should learn the variance of the moving background.
 
-
 ```python
 #training against moiving noisy background
 
@@ -466,8 +416,7 @@ for cycle in range(12):
                 var[w].append(np.mean(detector.variance_background))
 ```
 
-This is a huge block of quickly prototyped code. It essentially adds a few practical post processing steps to our detector, such as filtering for a range of object sizes. Also the number of true and false detections of objects are calculated over the entire run. The code can defintatly be streamlined :)
-
+This is a huge block of quickly prototyped code. It essentially adds a few practical post processing steps to our detector, such as filtering for a range of object sizes. Also, the number of true and false detections of objects are calculated over the entire run. The code can defintatly be streamlined :)
 
 ```python
 from skimage.measure import label, regionprops
@@ -659,9 +608,7 @@ for cycle in range(10):
     no person 79
     person 80
 
-
-Looking at the number of false detections it is quite clear that the high learning rate has serious issues for this specific test. The lower learning rates have nearly no false detection, and are all triggered by the 64 frame in this case.
-
+Looking at the number of false detections it is quite clear that the high learning rate has serious issues for this specific test. The lower learning rates have nearly no false detection and are all triggered by the 64 frame in this case.
 
 
 ```python
@@ -685,21 +632,16 @@ ax2.set_ylim([1,1e3])
 
 
 
-
     (1.0, 1000.0)
-
 
 
 
     <Figure size 1440x720 with 0 Axes>
 
 
-
 ![png](./assets/images/motion_detection/examples_39_2.png)
 
-
-The number of true detections is also important. Here is a plot of the total number of true detections normalised by the ground truth. Again here we see poor performance from the fast learner.
-
+The number of true detections is also important. Here is a plot of the total number of true detections normalised by the ground truth. Again, here we see poor performance from the fast learner.
 
 ```python
 plt.figure()
@@ -723,18 +665,13 @@ plt.legend(list(correct_detections.keys()))
 
 
 
-
     <matplotlib.legend.Legend at 0x7fab870077b8>
-
 
 
 
 ![png](./assets/images/motion_detection/examples_41_2.png)
 
+This notebook is by no means a defintiative analysis of this motion detecting class, however it shows the pitfalls of some paramters. The high learning rates could probably have imporved performance if a minimum variance is used. The size filtering in the example above is also another aspect which can help improve the detection. However, this does demonstrate that this alogrithm is quite robusrt, detecting >90% of motion events on a highly deformed background.
 
-This notebook is by no means a defintiative analysis of this motion detecting class, however it shows the pitfalls of some paramters. The high learning rates could probably have imporved performance if a minimum variance is used. The size filtering in the example above is also another aspect which can help improve the detection. However this does demonstrate that this alogrithm is quite robusrt, detecting >90% of motion events on a highly deformed background.
 
 
-```python
-
-```
