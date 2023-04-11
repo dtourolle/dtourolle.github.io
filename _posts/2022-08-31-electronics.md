@@ -6,47 +6,48 @@ image: ./assets/images/Old_with_electronics.jpg
 tags: e-reader
 ---
 
-# The electro-technical elements
+Simplifying an E-reader's Electro-technical Elements
+====================================================
 
-Creating an electronic design for the e-reader was remarkably straight forward, there are so many 3.3v-5v modules and opensource libraries for them, that it was easy for a hobbyist like me to put together a system that, on paper was complex, but was just 4-5 PCBs connected via standard interfaces. The challenges I faced were fitting it into the form factor which was reasonable. I am not trying to make an E-reader which would make a modern smart phone feel fat, but one which doesn't look too bad beside a pre-2008 Kindle.
+Creating an electronic design for an E-reader was easy for a hobbyist because of the many 3.3v-5v modules and opensource libraries. The major challenge was fitting it into a reasonable form factor. Here are the essential electro-technical elements:
 
-The [Waveshare IT8951 controller](https://www.waveshare.com/product/displays/e-paper/epaper-1/6inch-hd-e-paper-hat.htm) is an example of an amazing piece of hardware you can just plug onto a Raspberry Pi and make amazing images with. The problem I had was that not all Raspberry Pis are created equal in height, and the slim form factor of the Pi W Zero was being wasted by this hat thanks to the large standoff so that it can overlap the ethernet and USB ports in the Raspberry Pi B models. This resulted in several hours of de-soldering to remove the header from the GPIO. Sadly, this also left some damage to the board so while the Pi Zero could be soldered in place some additional wires needed to be ran between the boards.
+Waveshare IT8951 controller
+---------------------------
 
-## Power circuit
-The first electrical system is the power system. In the first version a PowerBoost 500C was used, this could both charge the battery and provide 5V to the system. Inspired by [lipopi] I used a circuit to allow a single button to be the on/off signal (https://github.com/NeonHorizon/lipopi). This basically allowed me to copy the user experience of the Kindle.
-![](./assets/images/power_setup.png)
-I cannot do justice the explanations provided by Daniel Bull and his team, but I will happily fail doing so. These people discovered a nice trick which is that the TX of the RPI can be used to enable the power boost once power is provided. With a little more electronics you can provide an interrupt to the system for when the same button is pressed again to initialize a shutdown signal.
+This controller is a plug-and-play Raspberry Pi module that creates fantastic images. However, it's not compatible with all Raspberry Pis because of their differing heights, resulting in hours of de-soldering and damage to the board. Additional wires had to be run between the boards.
 
-## User input
+Power Circuit
+-------------
 
-The second electrical system is the screen and user interactions. This is quite a simple setup, the IT8951 is connected vis SPI to the system and needs 5V supply. The buttons are all connected to a 3v3 bus, and the output legs are connected to the listed GPIOs in pull down mode. I am pretty sure there is a 10k resistor between the 3v3 and the button bus to protect the system for high current draws and protect the GPIOs.
+A PowerBoost 500C was used to charge the battery and provide 5V to the system. A circuit inspired by lipopi enabled a single button to be the on/off signal, copying the user experience of a Kindle. The TX of the RPI can enable the power boost once power is provided. More electronics allow an interrupt to the system when the same button is pressed again to initialize a shutdown signal.
 
-![](./assets/images/wiring_control.png)
+![Power Circuit](./assets/images/power_setup.png)
 
-## Packaging
+User Input
+----------
 
-The packaging of the electronics was not straight forward, the E-ink displays ribbon cable needed an adapter to a second ribbon cable.
-![](./assets/images/adapter_mess.png)
-What was frustrating was that no matter how you bend the connections the ribbon-ribbon adapter was always sticking out beyond the screen. The solution I found was to add a 45° to the screen ribbon and corrective 45° bend to the white ribbon. Finally, the white ribbon was very long and having had all the fun of de-soldering a 40 pin GPIO bus, I decided against trying to cut it myself. The solution was to use the ribbon cable to wrap the different circuit boards and battery into a single bundle. This worked extremely well and even helped the removal of the internals between v1 and v2.
+The IT8951 is connected via SPI and needs a 5V supply. The buttons are all connected to a 3v3 bus, and the output legs are connected to the listed GPIOs in pull down mode. There's a 10k resistor between the 3v3 and the button bus to protect the system from high current draws and protect the GPIOs.
 
-All connections not done by ribbon cable was doing using solid core copper cable cut from an old Ethernet cable. Connections to the Pi GPIO was done by making a tiny hook/curl at the end of a wire and carefully hooking this only the base of the pins while the solder was melted. The picture below shows the internals during disassembly of version 1, the ribbon cable can be seen with the 45° turn above the battery, it continues bellow the batter and electronics to the blue IT8951 board bellow the Pi Zero.
+![User Input Wiring](./assets/images/wiring_control.png)
 
-![](./assets/images/Old_with_electronics.jpg)
+Packaging
+---------
 
-## Controller
-The remote trigger was designed in the form of a watch. As this wasn't redesigned there, I don't have detailed CAD models for this. The design can be seen in the image below (along with my messy work bench). The electronics consisted of the following development boards.
+Packaging the electronics was not straightforward. An adapter was needed for the E-ink display ribbon cable to a second ribbon cable. The ribbon-ribbon adapter always stuck out beyond the screen, but a 45° to the screen ribbon and corrective 45° bend to the white ribbon solved this. The white ribbon was wrapped around the circuit boards and battery into a single bundle. Solid core copper cable from an old Ethernet cable was used for all connections not done by ribbon cable.
 
-![](./assets/images/trigger_electronics.jpg)
+![Packaging Image](./assets/images/Old_with_electronics.jpg)
 
-- [ICM20948](https://www.waveshare.com/10-dof-imu-sensor-d.htm)
-- Wemos mini D1 esp32
-- Adafruit boost basic 500C
-- 250 mAh battery
-- Adafruit Micro-Lipo Charger for LiPo
+Controller
+----------
 
-The Adafruit boost and charger circuits function essentially identical to a single boost charger. The reason two separate boards were used was to create a lower profile package by putting the boost and ACC board side by side.
+The remote trigger was designed in the form of a watch, using the following development boards:
 
-The wiring of the power circuit was very similar to the LiPoPi inspired circuit of the e-reader itself. When the power enabled the boost converter the first action after booting the ESP32 was to pull up the enable pin. At the same time a second pin was set to input mode to monitor the power button for shutdown. 
+*   ICM20948
+*   Wemos mini D1 esp32
+*   Adafruit boost basic 500C
+*   250 mAh battery
+*   Adafruit Micro-Lipo Charger for LiPo
 
-The IMU and ESP32 were connected via i2c, there was no special tricks or magic required to get this running.
+The Adafruit boost and charger circuits function like a single boost charger, but two separate boards were used to create a lower profile package. The wiring of the power circuit was very similar to the LiPoPi inspired circuit of the e-reader itself. The IMU and ESP32 were connected via i2c.
 
+![Controller Image](./assets/images/trigger_electronics.jpg)
